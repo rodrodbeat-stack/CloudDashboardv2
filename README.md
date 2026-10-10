@@ -1,23 +1,20 @@
 # CYBERUNDER — CloudDashboardv2
 
-Dashboard de infraestructura con estética cyberpunk y una vista visual de pipeline CI/CD.
+Centro de mando de infraestructura con estética cyberpunk. Todos los módulos de **SYSTEM MODULES / INFRASTRUCTURE OVERVIEW** son interactivos y abren un dashboard operativo con flujo visual, telemetría y diagnóstico simulado.
 
-## Archivos
-
-- `index.html`: portada de infraestructura; el acceso **DEV / CI/CD Command** abre `cicd.html`.
-- `cicd.html`: pipeline visual Git/Source → Build → QA/Test → Cert/Security → Prod/Release.
-- `assets/styles.css`: tema, responsive layout, efectos y animaciones.
-- `assets/app.js`: reloj y navegación móvil.
-- `assets/pipeline.js`: simulación de ejecución, flujo, logs, artefacto y métricas.
+## Módulos
+- **Cloud Fabric:** landing zones, gobernanza multicloud, inventario y FinOps.
+- **Zero Trust Grid:** IAM/RBAC, WAF, políticas y postura de seguridad.
+- **CI/CD Command:** Git → Build → QA → Cert/Security → Prod/Release.
+- **Telemetry Nexus:** métricas, logs, trazas y gestión de incidentes.
+- **Network Mesh:** VPC/VNet, rutas, VPN, peering, DNS y perímetro.
+- **IaC Foundry:** Terraform, plan/validate/apply y detección de drift.
 
 ## Publicar en GitHub Pages
-
-1. Descarga y descomprime el ZIP.
-2. Copia el contenido de la carpeta `CloudDashboardv2` a la raíz de tu repositorio GitHub `CloudDashboardv2`.
-3. Haz commit y push a la rama publicada por GitHub Pages (normalmente `main`).
-4. En GitHub, abre **Settings → Pages** y confirma que la publicación apunta a la rama y carpeta correctas.
-5. Abre la página publicada y selecciona **DEV** o **ABRIR CI/CD DASHBOARD**.
+1. Descomprime el ZIP.
+2. Copia el contenido de `CloudDashboardv2/` a la raíz del repositorio.
+3. Haz commit y push a la rama publicada por GitHub Pages.
+4. Abre la web; en **INFRASTRUCTURE OVERVIEW**, pincha cualquier tarjeta para abrir su dashboard.
 
 ## Importante
-
-El pipeline incluido es una **demo visual local**. Anima las etapas y genera logs simulados en el navegador; no ejecuta compilaciones reales ni despliega a producción. Para CI/CD real, conecta el repositorio con GitHub Actions y configura los jobs, secretos, entornos y destinos de despliegue correspondientes. El diseño no incluye aprobaciones manuales en el flujo simulado.
+Los módulos y los flujos son demos visuales de front-end. No están conectados a recursos AWS/Azure/GCP ni ejecutan cambios reales. El pipeline CI/CD requiere integración posterior con GitHub Actions y los entornos correspondientes. No hay aprobaciones manuales dentro del flujo simulado.
