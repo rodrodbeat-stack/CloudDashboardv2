@@ -1,29 +1,28 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07111f"><meta name="description" content="SKYNET CloudDashboardv2: panel de seguimiento CI/CD para GitHub Actions.">
-  <title>SKYNET // CloudDashboard v2</title><link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#070b13"><title>CYBERUNDER // INFRA COMMAND</title>
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <div class="scanlines" aria-hidden="true"></div>
-  <header class="topbar"><a class="brand" href="#top"><span class="brand-mark">S</span><span>SKYNET<span class="muted"> // CLOUD OPS</span></span></a><div class="top-right"><span class="live-dot"></span><span>SYSTEM ONLINE</span><span id="clock">--:--:--</span></div></header>
-  <main id="top" class="shell">
-    <section class="hero"><div><p class="eyebrow">AUTONOMOUS DELIVERY CONTROL</p><h1>CLOUD<span class="cyan">DASHBOARD</span></h1><p class="subtitle">Control central de despliegues · Telemetría animada · GitHub Actions · CERT / QA / PROD</p></div><div class="hero-status"><span class="status-label">PIPELINE STATUS</span><strong id="overallStatus">AWAITING DATA</strong><small id="lastRun">Sin ejecuciones cargadas</small></div></section>
-    <section class="stats"><article class="stat"><span>WORKFLOW</span><strong id="workflowName">SKYNET CI/CD</strong><small>GitHub Actions</small></article><article class="stat"><span>BRANCH</span><strong id="branch">main</strong><small>Production source</small></article><article class="stat"><span>LAST RUN</span><strong id="runNumber">—</strong><small id="runConclusion">Esperando consulta</small></article><article class="stat"><span>DEPLOYMENT</span><strong id="deployState">—</strong><small>GitHub Pages</small></article></section>
-    <section class="panel"><div class="section-head"><div><p class="eyebrow">DELIVERY PIPELINE</p><h2>Environment stages</h2></div><button id="refreshBtn" class="btn">↻ Refresh status</button></div>
-      <div class="pipeline"><article class="stage" data-stage="dev"><div class="stage-icon">01</div><div><span class="env">DEV</span><h3>Checkout & Build</h3><p>Git checkout · estructura de archivos · empaquetado</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="test"><div class="stage-icon">02</div><div><span class="env">DEV / CI</span><h3>Unit & Smoke Tests</h3><p>Pruebas básicas · existencia de recursos · validación HTML</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="security"><div class="stage-icon">03</div><div><span class="env">DEVSECOPS</span><h3>Security Gate</h3><p>Detección básica de secretos · revisión inicial de archivos</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="cert"><div class="stage-icon">04</div><div><span class="env">CERT</span><h3>Certification</h3><p>Verificación de artefacto y configuración de publicación</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="qa"><div class="stage-icon">05</div><div><span class="env">QA</span><h3>Quality Assurance</h3><p>Smoke tests y checks de integridad previos al release</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="prod"><div class="stage-icon">06</div><div><span class="env">PROD</span><h3>GitHub Pages Deploy</h3><p>Publicación automática del artefacto</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article><div class="connector"></div>
-<article class="stage" data-stage="health"><div class="stage-icon">07</div><div><span class="env">PROD / SRE</span><h3>Post-deploy Health Check</h3><p>Comprobación HTTP de la URL publicada</p><div class="stage-progress"><i></i></div></div><span class="pill pending">WAITING</span></article></div>
-      <p class="note"><strong>Modo automático:</strong> sin aprobaciones manuales. Una etapa fallida bloquea las siguientes. La telemetría animada es visual; los estados de ejecuciones se consultan desde GitHub Actions. Los checks de seguridad y QA son iniciales.</p>
+  <div class="scanlines"></div><header class="topbar">
+    <a class="brand" href="index.html"><span class="brand-mark">C/</span><span>CYBERUNDER<small>INFRA COMMAND CENTER</small></span></a>
+    <button class="menu-toggle" aria-label="Abrir menú">☰</button>
+    <nav class="nav"><a class="active" href="#infra">INFRA</a><a href="#security">SECURITY</a><a class="nav-dev" href="cicd.html">DEV <b>↗</b></a></nav>
+    <div class="system-state"><i class="pulse"></i> SYSTEM ONLINE <span id="clock">--:--:--</span></div>
+  </header>
+  <main>
+    <section class="hero" id="infra"><div class="hero-copy"><p class="eyebrow">// OPERATIONS GRID · BUILD 026</p><h1>CONTROL THE<br><span>INFRASTRUCTURE.</span></h1><p class="hero-text">Cloud, security y automatización en un solo centro de mando. Observa el estado de la infraestructura y entra al flujo de entrega continua.</p><div class="hero-actions"><a class="btn primary" href="cicd.html">ABRIR CI/CD DASHBOARD <span>↗</span></a><a class="btn ghost" href="#modules">EXPLORAR SISTEMAS</a></div><div class="hero-meta"><span><b>03</b> CLOUD ZONES</span><span><b>24/7</b> OBSERVABILITY</span><span><b>ZERO</b> TRUST MODEL</span></div></div>
+      <div class="orbital"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div><div class="core"><span>CYB</span><small>CORE NODE</small></div><span class="orbit-label label-a">AWS / AZURE</span><span class="orbit-label label-b">SECURE LINK</span><span class="orbit-label label-c">GCP / EDGE</span><div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div></div>
     </section>
-    <section class="panel"><div class="section-head"><div><p class="eyebrow">EVENT BUS</p><h2>Live pipeline event log</h2></div><span class="tag">AUTO-REFRESH</span></div><div id="eventLog" class="event-log" aria-live="polite"></div></section>
-<section class="lower-grid"><article class="panel"><div class="section-head"><div><p class="eyebrow">OBSERVABILITY</p><h2>Latest executions</h2></div><span class="tag">PUBLIC WORKFLOW DATA</span></div><div id="runsList" class="runs"><p class="empty">Pulsa “Refresh status” para consultar ejecuciones públicas de GitHub.</p></div><p id="apiMessage" class="api-message">API sin consultar.</p></article>
-      <article class="panel"><p class="eyebrow">QUICK ACCESS</p><h2>Operations links</h2><div class="links"><a href="https://github.com/rodrodbeat-stack/CloudDashboardv2" target="_blank" rel="noopener">↗ Repository <span>GitHub</span></a><a href="https://github.com/rodrodbeat-stack/CloudDashboardv2/actions" target="_blank" rel="noopener">↗ Actions <span>Pipeline runs</span></a><a href="https://rodrodbeat-stack.github.io/CloudDashboardv2/" target="_blank" rel="noopener">↗ Live dashboard <span>GitHub Pages</span></a></div><div class="legend"><span><i class="green"></i> Success</span><span><i class="yellow"></i> In progress</span><span><i class="red"></i> Failed</span></div></article></section>
-    <footer>SKYNET CLOUD OPS <span>·</span> AUTOMATED DELIVERY <span>·</span> <span id="year"></span></footer>
-  </main><script src="assets/js/app.js"></script>
+    <section class="ticker"><span>● LIVE TELEMETRY</span><span>NETWORK STATUS <b>NOMINAL</b></span><span>THREAT MONITOR <b>ACTIVE</b></span><span>DEPLOYMENT ENGINE <b>READY</b></span><span>● LIVE TELEMETRY</span></section>
+    <section class="section" id="modules"><div class="section-heading"><div><p class="eyebrow">// SYSTEM MODULES</p><h2>INFRASTRUCTURE <span>OVERVIEW</span></h2></div><span class="small-tag">ENVIRONMENT: MULTICLOUD</span></div>
+      <div class="module-grid"><article class="module-card"><div class="card-icon">◈</div><div class="card-top"><span>01 / CLOUD</span><span class="status">● ACTIVE</span></div><h3>Cloud Fabric</h3><p>Gobernanza y recursos para entornos híbridos y multicloud.</p><div class="chips"><span>AWS</span><span>AZURE</span><span>GCP</span></div><div class="card-line"><span>CONTROL PLANE</span><b>ONLINE</b></div></article>
+      <article class="module-card" id="security"><div class="card-icon magenta">⌬</div><div class="card-top"><span>02 / SECURITY</span><span class="status">● ACTIVE</span></div><h3>Zero Trust Grid</h3><p>Identidad, segmentación, políticas y protección por capas.</p><div class="chips"><span>IAM / RBAC</span><span>WAF</span><span>POLICY</span></div><div class="card-line"><span>THREAT SURFACE</span><b>MONITORED</b></div></article>
+      <a class="module-card dev-card" href="cicd.html"><div class="card-icon">⌘</div><div class="card-top"><span>03 / DEVOPS</span><span class="status">● READY</span></div><h3>CI/CD Command</h3><p>Flujo visual de entrega continua: Git, build, QA, certificación y producción.</p><div class="mini-flow"><i></i><i></i><i></i><i></i><i></i><span>GIT → BUILD → QA → CERT → PROD</span></div><div class="card-line"><span>OPEN PIPELINE</span><b>ENTER ↗</b></div></a></div>
+    </section>
+    <section class="bottom-band"><div><p class="eyebrow">// AUTOMATION FIRST</p><h2>FROM COMMIT TO <span>PRODUCTION.</span></h2></div><a class="btn primary" href="cicd.html">LANZAR PIPELINE <span>↗</span></a></section>
+  </main><footer><span>CYBERUNDER © 2026</span><span>INFRA // SECURITY // DELIVERY</span><span>BUILT FOR THE NEXT DEPLOYMENT</span></footer>
+  <script src="assets/app.js"></script>
 </body></html>

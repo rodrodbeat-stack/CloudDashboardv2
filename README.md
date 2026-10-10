@@ -1,17 +1,23 @@
-# SKYNET CloudDashboardv2 — CI/CD telemetry
+# CYBERUNDER — CloudDashboardv2
 
-Dashboard estático con estilo cyberpunk, stream animado y panel de eventos. Consulta ejecuciones públicas de GitHub Actions del repositorio `rodrodbeat-stack/CloudDashboardv2`.
+Dashboard de infraestructura con estética cyberpunk y una vista visual de pipeline CI/CD.
 
-## Pipeline
-DEV build/validación → smoke tests → DEVSECOPS (patrones comunes de secretos) → CERT → QA → PROD GitHub Pages. Sin aprobaciones manuales; los jobs dependientes se detienen si falla uno previo.
+## Archivos
 
-## Datos
-El estado e historial de ejecuciones provienen de la API pública de GitHub. La animación, eventos/min, throughput, latencia y workers son simulación visual, no métricas reales de infraestructura. CERT/QA y el gate de seguridad son checks iniciales, no sustituyen pruebas E2E ni escaneo profesional.
+- `index.html`: portada de infraestructura; el acceso **DEV / CI/CD Command** abre `cicd.html`.
+- `cicd.html`: pipeline visual Git/Source → Build → QA/Test → Cert/Security → Prod/Release.
+- `assets/styles.css`: tema, responsive layout, efectos y animaciones.
+- `assets/app.js`: reloj y navegación móvil.
+- `assets/pipeline.js`: simulación de ejecución, flujo, logs, artefacto y métricas.
 
-## Publicar
-1. Copia estos archivos a la raíz de `CloudDashboardv2`.
-2. En GitHub, ve a Settings → Pages y elige GitHub Actions.
-3. Haz push a `main` y revisa Actions.
+## Publicar en GitHub Pages
 
-Sitio: https://rodrodbeat-stack.github.io/CloudDashboardv2/
-Repositorio: https://github.com/rodrodbeat-stack/CloudDashboardv2
+1. Descarga y descomprime el ZIP.
+2. Copia el contenido de la carpeta `CloudDashboardv2` a la raíz de tu repositorio GitHub `CloudDashboardv2`.
+3. Haz commit y push a la rama publicada por GitHub Pages (normalmente `main`).
+4. En GitHub, abre **Settings → Pages** y confirma que la publicación apunta a la rama y carpeta correctas.
+5. Abre la página publicada y selecciona **DEV** o **ABRIR CI/CD DASHBOARD**.
+
+## Importante
+
+El pipeline incluido es una **demo visual local**. Anima las etapas y genera logs simulados en el navegador; no ejecuta compilaciones reales ni despliega a producción. Para CI/CD real, conecta el repositorio con GitHub Actions y configura los jobs, secretos, entornos y destinos de despliegue correspondientes. El diseño no incluye aprobaciones manuales en el flujo simulado.
