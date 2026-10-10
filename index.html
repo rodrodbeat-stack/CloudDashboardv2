@@ -1,33 +1,543 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#070b13"><title>CYBERUNDER // INFRA COMMAND</title>
-  <link rel="stylesheet" href="assets/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCPSB // GOOGLE CLOUD SECURITY BOX</title>
+    <!-- Chart.js para los gráficos interactivos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #060608;
+            --panel-bg: #0c0d12;
+            --accent-green: #00ff66;
+            --accent-blue: #00bcff;
+            --accent-red: #ff2a5f;
+            --accent-gcp-yellow: #f4b400;
+            --text-main: #e2e4ed;
+            --text-muted: #53586f;
+            --border-color: #1b1e2a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efecto de monitor CRT antiguo integrado por CSS */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            color: var(--text-main);
+            text-shadow: 0 0 5px rgba(0, 188, 255, 0.4);
+        }
+
+        .brand span {
+            color: var(--accent-blue);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .system-status {
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .status-online {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* Consola Terminal de Logs en Tiempo Real */
+        .terminal-console {
+            background-color: #020204;
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 30px;
+            height: 110px;
+            overflow-y: hidden;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+        }
+
+        .terminal-line {
+            margin-bottom: 4px;
+        }
+
+        .terminal-line .timestamp {
+            color: var(--text-muted);
+            margin-right: 10px;
+        }
+
+        .terminal-line .tag-warn { color: var(--accent-gcp-yellow); }
+
+        /* Hero Container */
+        .hero {
+            background: linear-gradient(135deg, var(--panel-bg) 0%, #07080c 100%);
+            border: 1px solid var(--border-color);
+            padding: 35px;
+            margin-bottom: 35px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .hero h2 {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            color: #8a91a8;
+            max-width: 750px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .cta-btn {
+            background: transparent;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-blue);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(0, 188, 255, 0.6);
+        }
+
+        /* Grid Operativo */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .module-title span {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .module-title h3 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .module-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background-color: rgba(0, 188, 255, 0.1);
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .module-card p {
+            font-size: 0.85rem;
+            color: #787f99;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            height: 40px;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 190px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .module-footer {
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .module-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
+        }
+
+        .dot.pulse {
+            animation: pulse-glow 1.6s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        .enter-link {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .enter-link:hover {
+            color: var(--accent-blue);
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-  <div class="scanlines"></div><header class="topbar">
-    <a class="brand" href="index.html"><span class="brand-mark">C/</span><span>CYBERUNDER<small>INFRA COMMAND CENTER</small></span></a>
-    <button class="menu-toggle" aria-label="Abrir menú">☰</button>
-    <nav class="nav"><a class="active" href="#infra">INFRA</a><a href="#security">SECURITY</a><a class="nav-dev" href="cicd.html">DEV <b>↗</b></a></nav>
-    <div class="system-state"><i class="pulse"></i> SYSTEM ONLINE <span id="clock">--:--:--</span></div>
-  </header>
-  <main>
-    <section class="hero" id="infra"><div class="hero-copy"><p class="eyebrow">// OPERATIONS GRID · BUILD 026</p><h1>CONTROL THE<br><span>INFRASTRUCTURE.</span></h1><p class="hero-text">Cloud, security y automatización en un solo centro de mando. Observa el estado de la infraestructura y entra al flujo de entrega continua.</p><div class="hero-actions"><a class="btn primary" href="cicd.html">ABRIR CI/CD DASHBOARD <span>↗</span></a><a class="btn ghost" href="#modules">EXPLORAR SISTEMAS</a></div><div class="hero-meta"><span><b>03</b> CLOUD ZONES</span><span><b>24/7</b> OBSERVABILITY</span><span><b>ZERO</b> TRUST MODEL</span></div></div>
-      <div class="orbital"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="orbit orbit-c"></div><div class="core"><span>CYB</span><small>CORE NODE</small></div><span class="orbit-label label-a">AWS / AZURE</span><span class="orbit-label label-b">SECURE LINK</span><span class="orbit-label label-c">GCP / EDGE</span><div class="orbit-dot dot-a"></div><div class="orbit-dot dot-b"></div><div class="orbit-dot dot-c"></div></div>
+
+    <!-- CONTROL CENTER HEADER -->
+    <header>
+        <div class="brand">
+            <h1>GCPSB // GOOGLE CLOUD SECURITY BOX</h1>
+            <span>// TELEMETRY FLOW INTEGRATION v2.6</span>
+        </div>
+        <div class="system-status">
+            SECURE LINK: <span class="status-online">CONNECTED</span><br>
+            AUDIT ENGINE: <span style="color: var(--accent-gcp-yellow);">ACTIVE</span>
+        </div>
+    </header>
+
+    <!-- LIVE TELEMETRY TERMINAL CONSOLE -->
+    <section class="terminal-console" id="terminalConsole">
+        <div class="terminal-line"><span class="timestamp">[00:00:00]</span> MESH INITIALIZED... WAITING FOR TELEMETRY INGESTION.</div>
     </section>
-    <section class="ticker"><span>● LIVE TELEMETRY</span><span>NETWORK STATUS <b>NOMINAL</b></span><span>THREAT MONITOR <b>ACTIVE</b></span><span>DEPLOYMENT ENGINE <b>READY</b></span><span>● LIVE TELEMETRY</span></section>
-    <section class="section" id="modules"><div class="section-heading"><div><p class="eyebrow">// SYSTEM MODULES</p><h2>INFRASTRUCTURE <span>OVERVIEW</span></h2></div><span class="small-tag">ENVIRONMENT: MULTICLOUD</span></div>
-      <div class="module-grid module-grid-expanded">
-      <a class="module-card" href="module.html?module=cloud"><div class="card-icon">◈</div><div class="card-top"><span>01 / CLOUD</span><span class="status">● ACTIVE</span></div><h3>Cloud Fabric</h3><p>Gobernanza, landing zones y recursos para entornos híbridos y multicloud.</p><div class="chips"><span>AWS</span><span>AZURE</span><span>GCP</span></div><div class="card-line"><span>OPEN MODULE</span><b>ENTER ↗</b></div></a>
-      <a class="module-card" href="module.html?module=security"><div class="card-icon magenta">⌬</div><div class="card-top"><span>02 / SECURITY</span><span class="status">● ACTIVE</span></div><h3>Zero Trust Grid</h3><p>Identidad, segmentación, políticas y protección por capas.</p><div class="chips"><span>IAM / RBAC</span><span>WAF</span><span>POLICY</span></div><div class="card-line"><span>OPEN MODULE</span><b>ENTER ↗</b></div></a>
-      <a class="module-card dev-card" href="cicd.html"><div class="card-icon">⌘</div><div class="card-top"><span>03 / DEVOPS</span><span class="status">● READY</span></div><h3>CI/CD Command</h3><p>Entrega continua: Git, build, QA, certificación y producción.</p><div class="mini-flow"><i></i><i></i><i></i><i></i><i></i><span>GIT → BUILD → QA → CERT → PROD</span></div><div class="card-line"><span>OPEN PIPELINE</span><b>ENTER ↗</b></div></a>
-      <a class="module-card" href="module.html?module=observability"><div class="card-icon magenta">⌁</div><div class="card-top"><span>04 / OBSERVABILITY</span><span class="status">● LIVE</span></div><h3>Telemetry Nexus</h3><p>Métricas, logs, trazas, alertas y salud de los servicios.</p><div class="chips"><span>METRICS</span><span>LOGS</span><span>TRACES</span></div><div class="card-line"><span>OPEN MODULE</span><b>ENTER ↗</b></div></a>
-      <a class="module-card" href="module.html?module=network"><div class="card-icon">⌘</div><div class="card-top"><span>05 / NETWORK</span><span class="status">● ONLINE</span></div><h3>Network Mesh</h3><p>Topología, conectividad privada, rutas, DNS y perímetro de red.</p><div class="chips"><span>VPC / VNET</span><span>VPN</span><span>WAF</span></div><div class="card-line"><span>OPEN MODULE</span><b>ENTER ↗</b></div></a>
-      <a class="module-card" href="module.html?module=iac"><div class="card-icon magenta">⌬</div><div class="card-top"><span>06 / AUTOMATION</span><span class="status">● READY</span></div><h3>IaC Foundry</h3><p>Infraestructura como código, módulos reutilizables y drift control.</p><div class="chips"><span>TERRAFORM</span><span>PLAN</span><span>STATE</span></div><div class="card-line"><span>OPEN MODULE</span><b>ENTER ↗</b></div></a>
-      </div>
+
+    <!-- HERO PANEL -->
+    <section class="hero">
+        <div>
+            <h2>SECURE THE CLOUD INFRASTRUCTURE.</h2>
+            <p>Consola táctica unificada para entornos cloud. Monitoreo automatizado de perímetros, auditoría de IAM desatendida y flujos dinámicos interactivos con mutación de datos.</p>
+        </div>
+        <button class="cta-btn" id="pipelineBtn">EJECUTAR GCP PIPELINE SCAN ↗</button>
     </section>
-    <section class="bottom-band"><div><p class="eyebrow">// AUTOMATION FIRST</p><h2>FROM COMMIT TO <span>PRODUCTION.</span></h2></div><a class="btn primary" href="cicd.html">LANZAR PIPELINE <span>↗</span></a></section>
-  </main><footer><span>CYBERUNDER © 2026</span><span>INFRA // SECURITY // DELIVERY</span><span>BUILT FOR THE NEXT DEPLOYMENT</span></footer>
-  <script src="assets/app.js"></script>
-</body></html>
+
+    <!-- MODULES MATRIX -->
+    <main class="modules-grid">
+
+        <!-- 01 / COMPUTE -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>01 / CORE COMPUTE</span>
+                        <h3>GKE & Compute Fabric</h3>
+                    </div>
+                    <span class="module-tag">GCP INFRA</span>
+                </div>
+                <p>Distribución de cargas críticas y balance de nodos de Kubernetes Engine (GKE).</p>
+                <div class="chart-container">
+                    <canvas id="chartCompute"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot pulse"></span> LOAD NORMAL</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+        <!-- 02 / PERIMETER -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>02 / PERIMETER</span>
+                        <h3>Cloud Armor & WAF</h3>
+                    </div>
+                    <span class="module-tag">VPC SEC</span>
+                </div>
+                <p>Superficie de mitigación ante ataques y denegación de servicios perimetrales.</p>
+                <div class="chart-container">
+                    <canvas id="chartArmor"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot pulse" style="background-color: var(--accent-red);"></span> MITIGATING</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+        <!-- 03 / ASSURANCE -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>03 / ASSURANCE</span>
+                        <h3>Artifact & Build Flow</h3>
+                    </div>
+                    <span class="module-tag">CI/CD SEC</span>
+                </div>
+                <p>Tasa de éxito de empaquetados e inyecciones seguras de código directo a producción.</p>
+                <div class="chart-container">
+                    <canvas id="chartDevSecOps"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot pulse"></span> STABLE</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+        <!-- 04 / TELEMETRY -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>04 / TELEMETRY</span>
+                        <h3>Cloud Logging Nexus</h3>
+                    </div>
+                    <span class="module-tag">SIEM INGEST</span>
+                </div>
+                <p>Clasificación de criticidad en la ingesta consolidada de logs de auditoría global.</p>
+                <div class="chart-container">
+                    <canvas id="chartLogging"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot pulse"></span> INGESTING</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+        <!-- 05 / GOVERNANCE -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>05 / GOVERNANCE</span>
+                        <h3>IAM & Cloud Identity</h3>
+                    </div>
+                    <span class="module-tag">ZERO TRUST</span>
+                </div>
+                <p>Distribución de privilegios, service accounts activas y tokens por vectores de zona.</p>
+                <div class="chart-container">
+                    <canvas id="chartIdentity"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot"></span> COMPLIANT</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+        <!-- 06 / AUTOMATION -->
+        <div class="module-card">
+            <div>
+                <div class="module-header">
+                    <div class="module-title">
+                        <span>06 / AUTOMATION</span>
+                        <h3>Terraform Config Drift</h3>
+                    </div>
+                    <span class="module-tag">IaC FOUNDRY</span>
+                </div>
+                <p>Detección automatizada de discrepancias entre el código base Git y el estado real.</p>
+                <div class="chart-container">
+                    <canvas id="chartDrift"></canvas>
+                </div>
+            </div>
+            <div class="module-footer">
+                <div class="module-status"><span class="dot"></span> BALANCED</div>
+                <a href="#" class="enter-link">VIEW ↗</a>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        GCPSB // GOOGLE CLOUD SECURITY BOX · INTERACTIVE ENGINE 2026
+    </footer>
+
+    <script>
+        // --- PARTE 1: AUDIO SYNTHESIZER (Web Audio API) ---
+        let audioCtx = null;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playBeep(frequency, type = 'sine', duration = 0.1, volume = 0.04) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = frequency;
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        // --- PARTE 2: CONSOLA DE LOGS EN VIVO ---
+        const consoleEl = document.getElementById('terminalConsole');
+        function addLog(text, type = 'info') {
+            const timeStr = new Date().toTimeString().split(' ')[0];
+            let tagClass = type === 'warn' ? 'tag-warn' : '';
+            consoleEl.innerHTML += `<div class="terminal-line"><span class="timestamp">[${timeStr}]</span> <span class="${tagClass}">>> ${text}</span></div>`;
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+            if (consoleEl.children.length > 4) consoleEl.removeChild(consoleEl.firstChild);
+        }
+
+        setInterval(() => {
+            const logs = [
+                {t:"Ingesta de Cloud Logs procesada.", ty:"info"},
+                {t:"Cloud Armor bloqueó solicitud anómala.", ty:"warn"},
+                {t:"Verificando firmas en Artifact Registry...", ty:"info"},
+                {t:"Sincronización de políticas IAM completada.", ty:"info"}
+            ];
+            const selected = logs[Math.floor(Math.random() * logs.length)];
+            addLog(selected.t, selected.ty);
+            playBeep(selected.ty === 'warn' ? 300 : 600, 'sine', 0.05, 0.01);
+        }, 4000);
+
+        // --- PARTE 3: GRÁFICOS (Chart.js) ---
+        Chart.defaults.color = '#53586f';
+        Chart.defaults.font.family = "'Courier New', Courier, monospace";
+        Chart.defaults.plugins.legend.display = false;
+
+        const gridOptions = {
+            responsive: true, maintainAspectRatio: false,
+            scales: { x: { grid: { color: '#161822' } }, y: { grid: { color: '#161822' } } }
+        };
+
+        const chartCompute = new Chart(document.getElementById('chartCompute'), {
+            type: 'bar', data: { labels: ['Prod', 'Staging', 'Dev'], datasets: [{ data: [85, 45, 25], backgroundColor: ['#00ff66', '#00bcff', '#f4b400'] }] },
+            options: { ...gridOptions, indexAxis: 'y', scales: { x: { max: 100, grid: { color: '#161822' } }, y: { grid: { display: false } } } }
+        });
+
+        const chartArmor = new Chart(document.getElementById('chartArmor'), {
+            type: 'radar', data: { labels: ['WAF', 'DDoS', 'SQLi', 'XSS', 'Geo'], datasets: [{ data: [90, 45, 20, 60, 30], backgroundColor: 'rgba(255, 42, 95, 0.15)', borderColor: '#ff2a5f', borderWidth: 1.5 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: '#1b1e2a' }, angleLines: { color: '#1b1e2a' }, pointLabels: { color: '#53586f' }, ticks: { display: false } } } }
+        });
+
+        const chartDevSec = new Chart(document.getElementById('chartDevSecOps'), {
+            type: 'line', data: { labels: ['01', '02', '03', '04', '05'], datasets: [{ data: [95, 92, 98, 94, 99], borderColor: '#00bcff', backgroundColor: 'rgba(0, 188, 255, 0.05)', fill: true, tension: 0.3 }] },
+            options: gridOptions
+        });
+
+        const chartLogging = new Chart(document.getElementById('chartLogging'), {
+            type: 'doughnut', data: { labels: ['Info', 'Warn', 'Err'], datasets: [{ data: [75, 18, 7], backgroundColor: ['#00ff66', '#f4b400', '#ff2a5f'], borderColor: '#0c0d12', borderWidth: 2 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%' }
+        });
+
+        const chartIdentity = new Chart(document.getElementById('chartIdentity'), {
+            type: 'polarArea', data: { labels: ['Z-1', 'Z-2', 'Z-3', 'Z-4'], datasets: [{ data: [40, 60, 30, 50], backgroundColor: ['rgba(0, 255, 102, 0.4)', 'rgba(0, 188, 255, 0.4)', 'rgba(244, 180, 0, 0.4)', 'rgba(155, 50, 255, 0.4)'], borderColor: '#0c0d12' }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { r: { grid: { color: '#1b1e2a' }, ticks: { display: false } } } }
+        });
+
+        const chartDrift = new Chart(document.getElementById('chartDrift'), {
+            type: 'bar', data: { labels: ['V1', 'V2', 'V3', 'V4', 'V5'], datasets: [{ label: 'Match', data: [10, 12, 11, 14, 15], backgroundColor: '#00bcff' }, { label: 'Drift', data: [1, 0, 2, 1, 0], backgroundColor: '#ff2a5f' }] },
+            options: { ...gridOptions, scales: { x: { stacked: true, grid: { color: '#161822' } }, y: { stacked: true, grid: { color: '#161822' } } } }
+        });
+
+        // Telemetría dinámica en intervalos
+        setInterval(() => {
+            chartCompute.data.datasets[0].data = chartCompute.data.datasets[0].data.map(v => Math.min(100, Math.max(10, v + Math.floor(Math.random() * 11) - 5)));
+            chartCompute.update('none');
+
+            chartArmor.data.datasets[0].data = chartArmor.data.datasets[0].data.map(v => Math.floor(Math.random() * 50) + 40);
+            chartArmor.update('none');
+        }, 3000);
+
+        // Acción del botón principal
+        document.getElementById('pipelineBtn').addEventListener('click', () => {
+            playBeep(800, 'square', 0.15, 0.05);
+            addLog("CRITICAL: Ejecutando GCP Pipeline Scan global...", "warn");
+            setTimeout(() => {
+                addLog("✓ COMPLIANCE OK: Todo el ecosistema está asegurado.", "info");
+                playBeep(1200, 'sine', 0.3, 0.05);
+            }, 1500);
+        });
+
+        document.body.addEventListener('click', (e) => {
+            if(e.target.tagName !== 'BUTTON') playBeep(150, 'triangle', 0.03, 0.02);
+        });
+    </script>
+</body>
+</html>
