@@ -1,20 +1,19 @@
-# CYBERUNDER — CloudDashboardv2
+# CYBERUNDER // CloudDashboardv2
 
-Centro de mando de infraestructura con estética cyberpunk. Todos los módulos de **SYSTEM MODULES / INFRASTRUCTURE OVERVIEW** son interactivos y abren un dashboard operativo con flujo visual, telemetría y diagnóstico simulado.
+Dashboard cyberpunk responsive para GitHub Pages. Cada tarjeta de `SYSTEM MODULES — INFRASTRUCTURE OVERVIEW` abre un flujo operativo distinto:
 
-## Módulos
-- **Cloud Fabric:** landing zones, gobernanza multicloud, inventario y FinOps.
-- **Zero Trust Grid:** IAM/RBAC, WAF, políticas y postura de seguridad.
-- **CI/CD Command:** Git → Build → QA → Cert/Security → Prod/Release.
-- **Telemetry Nexus:** métricas, logs, trazas y gestión de incidentes.
-- **Network Mesh:** VPC/VNet, rutas, VPN, peering, DNS y perímetro.
-- **IaC Foundry:** Terraform, plan/validate/apply y detección de drift.
+- **Cloud Fabric**: inventario → clasificación → landing zone → guardrails → FinOps → cumplimiento.
+- **Zero Trust Grid**: identidad → riesgo → inspección → política → contención → auditoría.
+- **CI/CD Command**: Git → Build → QA → Cert/Security → Prod/Release (dashboard separado `cicd.html`).
+- **Telemetry Nexus**: ingestión → normalización → correlación → detección → triage → reporte SLO.
+- **Network Mesh**: topología → rutas → trazado → filtros → DNS → conectividad.
+- **IaC Foundry**: source → calidad → plan → políticas → provisionamiento → drift.
 
-## Publicar en GitHub Pages
+## Publicar
 1. Descomprime el ZIP.
-2. Copia el contenido de `CloudDashboardv2/` a la raíz del repositorio.
-3. Haz commit y push a la rama publicada por GitHub Pages.
-4. Abre la web; en **INFRASTRUCTURE OVERVIEW**, pincha cualquier tarjeta para abrir su dashboard.
+2. Sube el contenido de la carpeta `CloudDashboardv2` a la raíz del repositorio GitHub Pages.
+3. Mantén la estructura `assets/` y los archivos HTML en la raíz.
+4. Abre `index.html` y entra en cada tarjeta para probar su flujo.
 
 ## Importante
-Los módulos y los flujos son demos visuales de front-end. No están conectados a recursos AWS/Azure/GCP ni ejecutan cambios reales. El pipeline CI/CD requiere integración posterior con GitHub Actions y los entornos correspondientes. No hay aprobaciones manuales dentro del flujo simulado.
+Los flujos, logs y métricas son demostraciones visuales en el navegador; no ejecutan acciones reales en AWS, Azure, GCP, Terraform ni sistemas de seguridad.
